@@ -1,0 +1,111 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+
+using namespace std;
+
+struct Cliente {
+    string nome;
+    string endereco;
+    string cep;
+    string telefone;
+    double orcamento;
+};
+
+int main() {
+    Cliente cliente1;
+    int opcao; // Faltava ; aqui
+
+    while (true) { // ABRE WHILE
+        cout << "\n==== Sistema C++ =====\n";
+        cout << "1. Cadastrar novo cliente \n";
+        cout << "2. Ler relatorio de clientes \n";
+        cout << "0. Sair\n";
+        cout << "Escolha: ";
+        cin >> opcao;
+
+        // Proteção contra letras
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(1000, '\n');
+            cout << "Erro: digite apenas numeros por favor!\n";
+            continue;
+        }
+
+        if (opcao == 0) {
+            break;
+        }
+
+        // ==========================================
+        // BLOCO 1: CADASTRO
+        // ==========================================
+        if (opcao == 1) { // <--- FALTAVA ABRIR ESSA CHAVE {
+            cin.ignore(); // Faltava () e ;
+
+            cout << "Nome: ";
+            getline(cin, cliente1.nome);
+
+            cout << "Telefone: ";
+            getline(cin, cliente1.telefone);
+
+            cout << "Endereco: ";
+            getline(cin, cliente1.endereco);
+
+            cout << "CEP: ";
+            getline(cin, cliente1.cep);
+
+            cout << "Orcamento: ";
+            cin >> cliente1.orcamento;
+
+            // GRAVAÇÃO NO ARQUIVO
+            ofstream arquivo;
+            arquivo.open("clientes.csv", ios::app); // Faltavam aspas " "
+
+            if (arquivo.is_open()) { // ABRE IF ARQUIVO
+                arquivo << cliente1.nome << ';'
+                        << cliente1.telefone << ';'
+                        << cliente1.endereco << ';'
+                        << cliente1.cep << ';'
+                        << cliente1.orcamento << '\n'; // Use \n no final para pular linha
+
+                arquivo.close();
+                cout << "Sucesso, salvo no HD!\n"; // Faltava ;
+            } // FECHA IF ARQUIVO
+
+        } // <--- FALTAVA FECHAR ESSA CHAVE DO OPCAO 1
+
+        // ==========================================
+        // BLOCO 2: LEITURA
+        // ==========================================
+        if (opcao == 2) { // ABRE IF OPCAO 2
+            cout << "\n--- Lendo Relatorio ---\n";
+
+            ifstream arquivo_leitura;
+            arquivo_leitura.open("clientes.csv"); // Faltavam aspas " "
+
+            if (arquivo_leitura.is_open()) { // ABRE IF ARQUIVO ABERTO
+                string nome, telefone, valor, endereco, cep;
+
+                // ATENÇÃO NAS VÍRGULAS DENTRO DO GETLINE
+                while (getline(arquivo_leitura, nome, ';')) { // ABRE WHILE LEITURA
+                    getline(arquivo_leitura, telefone, ';');
+                    getline(arquivo_leitura, endereco, ';');
+                    getline(arquivo_leitura, cep, ';');
+                    getline(arquivo_leitura, valor); // O último não tem ; pois pega até o final da linha
+
+                    cout << "Cliente: " << nome << " | Tel: " << telefone << " | R$: " << valor << "\n";
+                } // FECHA WHILE LEITURA
+                
+                arquivo_leitura.close(); // Faltava ;
+
+            } else { // ESSE ELSE PERTENCE AO IF(IS_OPEN)
+                cout << "ERRO: Arquivo nao encontrado ou vazio.\n";
+            } // FECHA IF ARQUIVO ABERTO
+
+            cout << "================================\n";
+        } // FECHA IF OPCAO 2
+
+    } // FECHA WHILE GLOBAL
+
+    return 0;
+} // FECHA MAIN
